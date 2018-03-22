@@ -61,6 +61,8 @@ def send_to_simulator(sim, weight_matrix):
                                                x=x_pos, y=y_pos, z=0
                                                )
 
+        # devo_neurons[i] = sim.send_motor_neuron(joint_id=side_joints[i])
+
         x_pos2 = math.cos(theta)*1.5*HEIGHT
         y_pos2 = math.sin(theta)*1.5*HEIGHT
 
@@ -76,6 +78,8 @@ def send_to_simulator(sim, weight_matrix):
                                         lo=-math.pi/4.0, hi=math.pi/4.0
                                         )
 
+        motor_neurons[i+4] = sim.send_motor_neuron(knees[i])
+
         # slide2
         side_cyls[i+4] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(HEIGHT+EPS)/2.0,
                                            r1=0, r2=0, r3=1,
@@ -87,7 +91,8 @@ def send_to_simulator(sim, weight_matrix):
                                                  x=0, y=0, z=HEIGHT+EPS
                                                  )
 
-        motor_neurons[i+4] = sim.send_motor_neuron(knees[i])
+        # devo_neurons[i+4] = sim.send_motor_neuron(joint_id=side_joints[i+4])
+
         foot_sensors[i] = sim.send_touch_sensor(side_cyls[i+4])  # rather than on shins[i]
         sensor_neurons[i] = sim.send_sensor_neuron(foot_sensors[i])
 
@@ -109,11 +114,14 @@ def send_to_simulator(sim, weight_matrix):
                                         start_time=start_time,
                                         end_time=end_time)
 
-    # Development
-    for i in range(8):
-        devo_neurons[i] = sim.send_motor_neuron(side_joints[i])
-        fnueron = sim.send_function_neuron(math.sin)
-        sim.send_synapse(fnueron, devo_neurons[i], 1.0)
+    # devo = sim.send_user_input_neuron(1)
+    # for target_id in devo_neurons:
+    #     count += 1
+    #     sim.send_developing_synapse(devo, target_id,
+    #                                 start_weight=-1,
+    #                                 end_weight=1,
+    #                                 start_time=0,
+    #                                 end_time=1)
 
     # layouts are useful for other things not relevant to this example
     layout = {'thighs': thighs,
