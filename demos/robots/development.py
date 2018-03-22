@@ -18,12 +18,12 @@ def send_to_simulator(sim, weight_matrix):
     shins = [0]*4
     hips = [0]*4
     knees = [0]*4
-    side_cyls = [0]*4
-    side_joints = [0]*4
+    side_cyls = [0]*8
+    side_joints = [0]*8
     foot_sensors = [0]*4
     sensor_neurons = [0]*5
     motor_neurons = [0]*8
-    devo_neurons = [0]*4
+    devo_neurons = [0]*8
 
     delta = float(math.pi)/2.0
 
@@ -41,6 +41,7 @@ def send_to_simulator(sim, weight_matrix):
                                       length=HEIGHT, radius=EPS, capped=True
                                       )
 
+        # main_body to thigh
         hips[i] = sim.send_hinge_joint(main_body, thighs[i],
                                        x=x_pos/2.0, y=y_pos/2.0, z=HEIGHT+EPS,
                                        n1=-y_pos, n2=x_pos, n3=0,
@@ -49,37 +50,45 @@ def send_to_simulator(sim, weight_matrix):
 
         motor_neurons[i] = sim.send_motor_neuron(joint_id=hips[i])
 
+        # slide1
+        side_cyls[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=HEIGHT+EPS,
+                                         r1=x_pos, r2=y_pos, r3=0,
+                                         length=HEIGHT, radius=EPS, capped=True
+                                         )
+
+        # thigh to slide1
+        side_joints[i] = sim.send_slider_joint(thighs[i], side_cyls[i],
+                                               x=x_pos, y=y_pos, z=0
+                                               )
+
         x_pos2 = math.cos(theta)*1.5*HEIGHT
         y_pos2 = math.sin(theta)*1.5*HEIGHT
 
         shins[i] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(HEIGHT+EPS)/2.0,
                                      r1=0, r2=0, r3=1,
-                                     length=HEIGHT, radius=EPS,
-                                     mass=1., capped=True)
+                                     length=HEIGHT, radius=EPS, capped=True
+                                     )
 
-        knees[i] = sim.send_hinge_joint(thighs[i], shins[i],
+        # slide1 to shin
+        knees[i] = sim.send_hinge_joint(side_cyls[i], shins[i],
                                         x=x_pos2, y=y_pos2, z=HEIGHT+EPS,
                                         n1=-y_pos, n2=x_pos, n3=0,
-                                        lo=-math.pi/4.0, hi=math.pi/4.0)
+                                        lo=-math.pi/4.0, hi=math.pi/4.0
+                                        )
 
-        ############################################################################
-        # Development
+        # slide2
+        side_cyls[i+4] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(HEIGHT+EPS)/2.0,
+                                           r1=0, r2=0, r3=1,
+                                           length=HEIGHT, radius=EPS, capped=True
+                                           )
 
-        side_cyls[i] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(HEIGHT+EPS)/2.0,
-                                         r1=0, r2=0, r3=1,
-                                         length=HEIGHT, radius=EPS,
-                                         mass=1., capped=True
-                                         )
-
-        side_joints[i] = sim.send_slider_joint(shins[i], side_cyls[i],
-                                               x=0, y=0, z=HEIGHT+EPS
-                                               )
-
-        ############################################################################
+        # shin to slide2
+        side_joints[i+4] = sim.send_slider_joint(shins[i], side_cyls[i+4],
+                                                 x=0, y=0, z=HEIGHT+EPS
+                                                 )
 
         motor_neurons[i+4] = sim.send_motor_neuron(knees[i])
-        foot_sensors[i] = sim.send_touch_sensor(side_cyls[i])
-        # foot_sensors[i] = sim.send_touch_sensor(shins[i])
+        foot_sensors[i] = sim.send_touch_sensor(side_cyls[i+4])  # rather than on shins[i]
         sensor_neurons[i] = sim.send_sensor_neuron(foot_sensors[i])
 
     count = 0
@@ -100,15 +109,11 @@ def send_to_simulator(sim, weight_matrix):
                                         start_time=start_time,
                                         end_time=end_time)
 
-    ############################################################################
     # Development
-
-    for i in range(4):
-        fnueron = sim.send_function_neuron(math.sin)
+    for i in range(8):
         devo_neurons[i] = sim.send_motor_neuron(side_joints[i])
+        fnueron = sim.send_function_neuron(math.sin)
         sim.send_synapse(fnueron, devo_neurons[i], 1.0)
-
-    ############################################################################
 
     # layouts are useful for other things not relevant to this example
     layout = {'thighs': thighs,
@@ -144,13 +149,14 @@ if __name__ == "__main__":
     print(eval_time)
     gravity = -1.0
 
-    sim = pyrosim.Simulator(eval_time=eval_time, debug=True,
-                               play_paused=False,
-                               gravity=gravity,
-                               play_blind=False,
-                               use_textures=True,
-                               capture=False,
-                               dt=dt)
+    sim = pyrosim.Simulator(eval_time=eval_time,
+                            debug=True,
+                            play_paused=True,
+                            gravity=gravity,
+                            play_blind=False,
+                            use_textures=True,
+                            capture=False,
+                            dt=dt)
     num_sensors = 5
     num_motors = 8
 
