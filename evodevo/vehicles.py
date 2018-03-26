@@ -2,7 +2,16 @@ import math
 
 
 def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05):
+    """
+    A quadruped has a sphere torso with one leg on each side.
 
+    Each leg consists of thigh and shin cylinders which develop (i.e. grow/shrink in length).
+
+    Leg segments are connected by hip and knee joints.
+
+    The shins (it's foot) then has a touch sensor.
+
+    """
     main_body = sim.send_sphere(x=0, y=0, z=height+eps, radius=height/2.)
 
     # id arrays
@@ -19,10 +28,6 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05):
 
     delta = float(math.pi)/2.0
 
-    # quadruped is a sphere with one leg on each side
-    # each leg consists thigh and shin cylinders (both of which are extendable, through development)
-    # with hip and knee joints
-    # each shin/foot then has a touch sensor
     for i in range(4):
         theta = delta*i
         x_pos = math.cos(theta)*height
@@ -133,5 +138,4 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05):
     sim.create_collision_matrix('all')
 
     return layout
-
 
