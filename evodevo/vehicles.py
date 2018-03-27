@@ -98,10 +98,8 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05):
     light_source = sim.send_light_source(env_box)
 
     count = 0
-    # developing synapses linearly change from the start value to the
-    # end value over the course of start time to end time
-    # Here we connect each sensor to each motor, pulling weights from
-    # the weight matrix
+    # developing synapses linearly change from the start value to the end value during the evaluation period;
+    # here we connect each sensor to each motor.
     for source_id in sensor_neurons:
         for target_id in motor_neurons:
             count += 1

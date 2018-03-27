@@ -3,12 +3,13 @@ import random
 import numpy as np
 from replicators import Population
 
-RUNS = 25
-POP_SIZE = 100
-GENS = 1000
+RUNS = 1
+POP_SIZE = 10
+GENS = 10
 
 SECONDS = 100
 DT = 0.05
+DIR = ''
 
 
 for run in range(RUNS):
@@ -16,7 +17,7 @@ for run in range(RUNS):
     random.seed(run)
     np.random.seed(run)
 
-    for devo in [False, True]:
+    for devo in [True, False]:
 
         pop = Population(size=POP_SIZE, devo=devo, sec=SECONDS, dt=DT)
 
@@ -29,7 +30,7 @@ for run in range(RUNS):
             pop.print_non_dominated()
             pop.gen += 1
 
-        f = open('~/scratch/Rigid_Devo/Rigid_Devo_{0}_Run_{1}.p'.format(int(devo), run), 'w')
+        f = open(DIR + 'Rigid_Devo_{0}_Run_{1}.p'.format(int(devo), run), 'w')
         pickle.dump(pop, f)
         f.close()
 

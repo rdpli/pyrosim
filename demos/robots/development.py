@@ -186,7 +186,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix):
 
 if __name__ == "__main__":
 
-    seconds = 60.0
+    seconds = 5.0
     dt = 0.05
     eval_time = int(seconds/dt)
     print(eval_time)
@@ -207,8 +207,10 @@ if __name__ == "__main__":
     weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors, 2)
     weight_matrix = 2.0 * weight_matrix - 1.0
 
-    devo_matrix = np.ones((8, 2), dtype=float)*-1.0
+    devo_matrix = np.ones((8, 2), dtype=float)
     devo_matrix[:, 1] *= -1.0
+    # print devo_matrix
+    # devo_matrix = np.random.rand(8, 2)*2.0-1
 
     layout = send_to_simulator(sim, weight_matrix=weight_matrix, devo_matrix=devo_matrix)
     sim.start()

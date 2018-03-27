@@ -47,7 +47,7 @@ class Individual(object):
 
     def start_evaluation(self, seconds, dt):
         eval_time = int(seconds/dt)
-        self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=False, dt=dt)
+        self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=True, dt=dt)
         layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix)
         self.sim.start()
         self.fitness_sensor_idx = layout['light_sensor']
@@ -141,9 +141,9 @@ class Population(object):
         for key, ind in self.individuals_dict.items():
             ind.pareto_level = len(ind.dominated_by)
             if ind.pareto_level in self.pareto_levels:
-                self.pareto_levels[ind.pareto_level] += [(ind.id, ind.fitness, ind.age, ind.dev_compression)]
+                self.pareto_levels[ind.pareto_level] += [(ind.id, ind.fitness, ind.age)]
             else:
-                self.pareto_levels[ind.pareto_level] = [(ind.id, ind.fitness, ind.age, ind.dev_compression)]
+                self.pareto_levels[ind.pareto_level] = [(ind.id, ind.fitness, ind.age)]
             if ind.pareto_level == 0:
                 self.non_dominated_size += 1
 
@@ -153,7 +153,7 @@ class Population(object):
         if keep_non_dom_only:  # completely reduce to non-dominated front (most pressure, least diversity)
 
             children = {}
-            for idx, fit, age, compression in self.pareto_levels[0]:
+            for idx, fit, age in self.pareto_levels[0]:
                 children[idx] = self.individuals_dict[idx]
             self.individuals_dict = children
 
