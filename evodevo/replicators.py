@@ -19,16 +19,23 @@ class Individual(object):
 
         num_sensors = 5
         num_motors = 8
-        if devo:
-            weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors, 2)
-            self.devo_matrix = 2.0 * np.random.rand(8, 2) - 1.0
-        else:
-            weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors)
-            self.devo_matrix = np.zeros((8, 2))
 
+        weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors, 2)
+        self.devo_matrix = 2.0 * np.random.rand(8, 2) - 1.0
         self.weight_matrix = 2.0 * weight_matrix - 1.0
 
+        if not devo:
+            self.remove_devo()
+
+    def remove_devo(self):
+        self.weight_matrix = np.stack([self.weight_matrix[:, :, 0], self.weight_matrix[:, :, 0]], axis=2)
+        self.devo_matrix = np.stack([self.devo_matrix[:, 0], self.devo_matrix[:, 0]], axis=1)
+
     def mutate(self, new_id, n=1):
+
+        if self.devo:
+            n *= 2  # same proportion of genes mutated in evo and evo-devo
+
         # neural net
         weight_change = np.random.normal(scale=np.abs(self.weight_matrix))
         new_weights = np.clip(self.weight_matrix + weight_change, -1, 1)
@@ -36,11 +43,13 @@ class Individual(object):
         self.weight_matrix[mask] = new_weights[mask]
 
         # leg length
-        if self.devo:
-            devo_change = np.random.normal(scale=np.abs(self.devo_matrix))
-            new_devo = np.clip(self.devo_matrix + devo_change, -1, 1)
-            mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
-            self.devo_matrix[mask] = new_devo[mask]
+        devo_change = np.random.normal(scale=np.abs(self.devo_matrix))
+        new_devo = np.clip(self.devo_matrix + devo_change, -1, 1)
+        mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
+        self.devo_matrix[mask] = new_devo[mask]
+
+        if not self.devo:
+            self.remove_devo()  # maintain a single leg length throughout development
 
         self.id = new_id
         self.already_evaluated = False

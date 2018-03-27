@@ -4,8 +4,8 @@ import numpy as np
 from replicators import Population
 
 RUNS = 1
-POP_SIZE = 10
-GENS = 10
+POP_SIZE = 5
+GENS = 5
 
 SECONDS = 100
 DT = 0.05
@@ -17,7 +17,7 @@ for run in range(RUNS):
     random.seed(run)
     np.random.seed(run)
 
-    for devo in [True, False]:
+    for devo in [False, True]:
 
         pop = Population(size=POP_SIZE, devo=devo, sec=SECONDS, dt=DT)
 
@@ -30,8 +30,15 @@ for run in range(RUNS):
             pop.print_non_dominated()
             pop.gen += 1
 
+        results = {key: {'weights': [], 'devo': [], 'age': 0, 'fit': 0} for key, ind in pop.individuals_dict.items()}
+        for key, ind in pop.individuals_dict.items():
+            results[key]['weights'] = ind.weight_matrix
+            results[key]['devo'] = ind.devo_matrix
+            results[key]['age'] = ind.age
+            results[key]['fitness'] = ind.fitness
+
         f = open(DIR + 'Rigid_Devo_{0}_Run_{1}.p'.format(int(devo), run), 'w')
-        pickle.dump(pop, f)
+        pickle.dump(results, f)
         f.close()
 
 
