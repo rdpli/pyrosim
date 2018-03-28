@@ -1,7 +1,7 @@
 import math
 
 
-def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05):
+def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05, source=10):
     """
     A quadruped has a sphere torso with one leg on each side.
 
@@ -94,7 +94,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05):
 
     light_sensor = sim.send_light_sensor(main_body)
 
-    env_box = sim.send_box(x=5, y=-5, z=height/2.0, length=height, width=height, height=height, mass=3.)
+    env_box = sim.send_box(x=source, y=-source, z=height / 2.0, length=height, width=height, height=height, mass=3.)
     light_source = sim.send_light_source(env_box)
 
     count = 0

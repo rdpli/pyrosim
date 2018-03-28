@@ -57,9 +57,9 @@ class Individual(object):
         self.id = new_id
         self.already_evaluated = False
 
-    def start_evaluation(self, seconds, dt, blind=True):
+    def start_evaluation(self, seconds, dt, blind=True, fancy=True):
         eval_time = int(seconds/dt)
-        self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt)
+        self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt, use_textures=fancy)
         layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix)
         self.sim.start()
         self.fitness_sensor_idx = layout['light_sensor']
