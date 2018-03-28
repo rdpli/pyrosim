@@ -10,4 +10,4 @@
 
 PATH=$HOME/anaconda/bin:$PATH
 cd $HOME/scratch/rigid_bodies/pyrosim/evodevo/
-PYTHONPATH=$HOME/pkg/pyrosim/ $HOME/anaconda/bin/python ./pbs_rigid_evo_devo.py $ARG_SEED
+PYTHONPATH=$HOME/scratch/rigid_bodies/pyrosim/ $HOME/anaconda/bin/python ./pbs_rigid_evo_devo.py $ARG_SEED
