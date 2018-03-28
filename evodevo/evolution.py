@@ -4,8 +4,8 @@ import numpy as np
 from replicators import Population, Individual
 
 RUNS = 1
-POP_SIZE = 500
-GENS = 5000
+POP_SIZE = 200
+GENS = 1000
 
 SECONDS = 60
 DT = 0.05
