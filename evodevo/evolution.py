@@ -1,23 +1,23 @@
 import pickle
 import random
 import numpy as np
-from replicators import Population
+from replicators import Population, Individual
 
 RUNS = 1
-POP_SIZE = 5
-GENS = 5
+POP_SIZE = 500
+GENS = 5000
 
-SECONDS = 100
+SECONDS = 60
 DT = 0.05
 DIR = ''
 
 
-for run in range(RUNS):
+for run in range(1, RUNS+1):
 
     random.seed(run)
     np.random.seed(run)
 
-    for devo in [False, True]:
+    for devo in [True]:  # [False, True]
 
         pop = Population(size=POP_SIZE, devo=devo, sec=SECONDS, dt=DT)
 
@@ -35,19 +35,28 @@ for run in range(RUNS):
             results[key]['weights'] = ind.weight_matrix
             results[key]['devo'] = ind.devo_matrix
             results[key]['age'] = ind.age
-            results[key]['fitness'] = ind.fitness
+            results[key]['fit'] = ind.fitness
 
         f = open(DIR + 'Rigid_Devo_{0}_Run_{1}.p'.format(int(devo), run), 'w')
         pickle.dump(results, f)
         f.close()
 
 
-# r = open('data/Dev_1_Run_1.p', 'r')
-# final_pop = pickle.load(r)
-#
-# sorted_inds = sorted(final_pop.individuals_dict, key=lambda k: final_pop.individuals_dict[k].fitness)
-# final_pop.individuals_dict[sorted_inds[-1]].start_evaluation(blind=False, eval_time=EVAL_TIME, pause=True)
-#
-# r.close()
+r = open(DIR + 'Rigid_Devo_1_Run_1.p', 'r')
+pickle_dict = pickle.load(r)
 
+best_fit = 0
+champ_idx = 0
+for k, v in pickle_dict.items():
+    if v['fit'] > best_fit:
+        champ_idx, best_fit = k, v['fit']
+
+bot = Individual(0, 1)
+bot.weight_matrix = pickle_dict[champ_idx]['weights']
+
+# bot.turn_off_brain()  # show only morphological change
+
+bot.devo_matrix = pickle_dict[champ_idx]['devo']
+
+bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False)
 

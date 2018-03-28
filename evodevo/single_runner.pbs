@@ -1,0 +1,13 @@
+#PBS -j oe
+#PBS -N RigidBodies
+#PBS -m a
+#PBS -m b
+#PBS -o $HOME/scratch/rigid_bodies/pbs_$ARG_SEED.log
+#PBS -M skriegma@uvm.edu
+#PBS -l nodes=1:ppn=24,pmem=2gb,pvmem=2gb
+#PBS -l walltime=03:00:00
+#PBS -q shortq
+
+PATH=$HOME/anaconda/bin:$PATH
+cd $HOME/scratch/rigid_bodies/
+PYTHONPATH=$HOME/pkg/pyrosim/ $HOME/anaconda/bin/python ./pbs_rigid_evo_devo.py $ARG_SEED
