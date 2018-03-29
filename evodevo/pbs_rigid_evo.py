@@ -8,7 +8,7 @@ SEED = int(sys.argv[1])
 POP_SIZE = 500
 GENS = 2000
 
-DEVO = True
+DEVO = False
 
 SECONDS = 60
 DT = 0.05
