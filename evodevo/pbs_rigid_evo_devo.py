@@ -5,8 +5,8 @@ import numpy as np
 from replicators import Population
 
 SEED = int(sys.argv[1])
-POP_SIZE = 500
-GENS = 2000
+POP_SIZE = 200
+GENS = 1000
 
 DEVO = True
 
