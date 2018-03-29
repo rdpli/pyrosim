@@ -1,17 +1,18 @@
-import pickle
 import random
 import sys
 import numpy as np
 from replicators import Population
 
 SEED = int(sys.argv[1])
-POP_SIZE = 200
-GENS = 1000
+POP_SIZE = 30
+GENS = 10000
 
 DEVO = True
 
-SECONDS = 60
+SECONDS = 100
 DT = 0.05
+
+SAVE_EVERY = 1000
 DIR = '/users/s/k/skriegma/scratch/rigid_bodies/'
 
 random.seed(SEED)
@@ -28,14 +29,5 @@ for gen in range(GENS):
     pop.print_non_dominated()
     pop.gen += 1
 
-results = {key: {'weights': [], 'devo': [], 'age': 0, 'fit': 0} for key, ind in pop.individuals_dict.items()}
-for key, ind in pop.individuals_dict.items():
-    results[key]['weights'] = ind.weight_matrix
-    results[key]['devo'] = ind.devo_matrix
-    results[key]['age'] = ind.age
-    results[key]['fit'] = ind.fitness
-
-f = open(DIR + 'Rigid_Devo_{0}_Run_{1}.p'.format(int(DEVO), SEED), 'w')
-pickle.dump(results, f)
-f.close()
-
+    if pop.gen % SAVE_EVERY == 0:
+        pop.save(DIR, SEED)

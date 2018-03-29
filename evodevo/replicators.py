@@ -1,4 +1,5 @@
 import numpy as np
+import cPickle
 from copy import deepcopy
 import pyrosim
 from vehicles import send_to_simulator
@@ -101,6 +102,17 @@ class Population(object):
 
     def print_non_dominated(self):
         print self.gen, self.pareto_levels[0]
+
+    def save(self, dir, seed):
+        results = {key: {'weights': [], 'devo': [], 'age': 0, 'fit': 0} for key, ind in self.individuals_dict.items()}
+        for key, ind in self.individuals_dict.items():
+            results[key]['weights'] = ind.weight_matrix
+            results[key]['devo'] = ind.devo_matrix
+            results[key]['age'] = ind.age
+            results[key]['fit'] = ind.fitness
+        f = open(dir + 'Rigid_Devo_{0}_Run_{1}_Gen_{2}.p'.format(int(self.devo), seed, self.gen), 'w')
+        cPickle.dump(results, f)
+        f.close()
 
     def evaluate(self):
         for key, ind in self.individuals_dict.items():
