@@ -73,9 +73,10 @@ class Individual(object):
         self.id = new_id
         self.already_evaluated = False
 
-    def start_evaluation(self, seconds, dt, blind=True, fancy=True):
+    def start_evaluation(self, seconds, dt, blind=True, fancy=False, pause=False):
         eval_time = int(seconds/dt)
-        self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt, use_textures=fancy)
+        self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt,
+                                     use_textures=fancy, play_paused=pause)
         layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix)
         self.sim.start()
         self.fitness_sensor_idx = layout['light_sensor']
@@ -114,19 +115,28 @@ class Population(object):
         self.pareto_levels = {}
         self.add_random_inds(size)
         self.evaluate()
+        self.hist = {key: {'weights': [], 'devo': [], 'age': 0, 'fit': 0} for key, ind in self.individuals_dict.items()}
+        if devo:
+            name = 'Devo'
+        else:
+            name = 'Evo'
+        self.name = name
 
     def print_non_dominated(self):
         print self.gen, self.pareto_levels[0]
 
-    def save(self, dir, seed):
-        results = {key: {'weights': [], 'devo': [], 'age': 0, 'fit': 0} for key, ind in self.individuals_dict.items()}
+    def update_hist(self):
         for key, ind in self.individuals_dict.items():
-            results[key]['weights'] = ind.weight_matrix
-            results[key]['devo'] = ind.devo_matrix
-            results[key]['age'] = ind.age
-            results[key]['fit'] = ind.fitness
-        f = open(dir + 'Rigid_Devo_{0}_Run_{1}_Gen_{2}.p'.format(int(self.devo), seed, self.gen), 'w')
-        cPickle.dump(results, f)
+            if key not in self.hist:
+                self.hist[key] = {}
+            self.hist[key]['weights'] = ind.weight_matrix
+            self.hist[key]['devo'] = ind.devo_matrix
+            self.hist[key]['age'] = ind.age
+            self.hist[key]['fit'] = ind.fitness
+
+    def save(self, dir, seed):
+        f = open(dir + '/Rigid_{0}_Run_{1}_Gen_{2}.p'.format(self.name, seed, self.gen), 'w')
+        cPickle.dump(self.hist, f)
         f.close()
 
     def evaluate(self):

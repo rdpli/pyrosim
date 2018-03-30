@@ -12,7 +12,7 @@ DEVO = True
 SECONDS = 300
 DT = 0.05
 
-SAVE_EVERY = 1
+SAVE_EVERY = 1000
 DIR = '/users/s/k/skriegma/scratch/rigid_bodies/data'
 
 random.seed(SEED)
@@ -25,9 +25,12 @@ for gen in range(GENS):
     pop.add_random_inds(1)
     pop.increment_ages()
     pop.evaluate()
+    pop.update_hist()
     pop.reduce()
     pop.print_non_dominated()
     pop.gen += 1
 
     if pop.gen % SAVE_EVERY == 0:
         pop.save(DIR, SEED)
+
+pop.save(DIR, SEED)

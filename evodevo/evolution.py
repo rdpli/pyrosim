@@ -5,7 +5,7 @@ from replicators import Population, Individual
 
 SEED = 1
 POP_SIZE = 10
-GENS = 10
+GENS = 5
 
 DEVO = True
 
@@ -13,7 +13,7 @@ SECONDS = 60
 DT = 0.05
 
 SAVE_EVERY = 10
-DIR = ''
+DIR = 'data'
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -25,15 +25,15 @@ np.random.seed(SEED)
 #     pop.add_random_inds(1)
 #     pop.increment_ages()
 #     pop.evaluate()
+#     pop.update_hist()
 #     pop.reduce()
 #     pop.print_non_dominated()
 #     pop.gen += 1
 #
-#     if pop.gen % SAVE_EVERY == 0:
-#         pop.save(DIR, SEED)
+# pop.save(DIR, SEED)
 
-for run in range(13, 14):
-    r = open(DIR + 'Rigid_Devo_1_Run_{}_Gen_10000.p'.format(run), 'r')
+for run in range(1, 2):
+    r = open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'r')
     pickle_dict = cPickle.load(r)
 
     robot_ids = []
@@ -52,8 +52,8 @@ bot = Individual(0, 1)
 bot.weight_matrix = pickle_dict[champ_idx]['weights']
 bot.devo_matrix = pickle_dict[champ_idx]['devo']
 
-# bot.turn_off_brain()
+bot.turn_off_brain()
 # bot.turn_off_body(1.0)
 
-bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False)
+bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True)
 
