@@ -9,11 +9,11 @@ GENS = 10000
 
 DEVO = False
 
-SECONDS = 100
+SECONDS = 300
 DT = 0.05
 
 SAVE_EVERY = 1000
-DIR = '/users/s/k/skriegma/scratch/rigid_bodies/'
+DIR = '/users/s/k/skriegma/scratch/rigid_bodies/data'
 
 random.seed(SEED)
 np.random.seed(SEED)

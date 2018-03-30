@@ -35,21 +35,36 @@ class Individual(object):
     def turn_off_brain(self):
         self.weight_matrix = np.zeros_like(self.weight_matrix)
 
-    def mutate(self, new_id, n=1):
+    def turn_off_body(self, l):
+        self.devo_matrix = np.ones_like(self.devo_matrix)*l
 
-        if self.devo:
-            n *= 2  # same proportion of genes mutated in evo and evo-devo
+    def calc_body_change(self):
+        change = np.abs(self.devo_matrix[:, 0] - self.devo_matrix[:, 1])
+        change /= float(2.0*len(change))
+        return np.sum(change)
+
+    def calc_control_change(self):
+        change = np.abs(self.weight_matrix[:, :, 0] - self.weight_matrix[:, :, 1])
+        change /= float(2.0*np.product(change.shape))
+        return np.sum(change)
+
+    def mutate(self, new_id, p=0.1):
+
+        # if self.devo:
+        #     n *= 2  # same proportion of genes mutated in evo and evo-devo
 
         # neural net
         weight_change = np.random.normal(scale=np.abs(self.weight_matrix))
         new_weights = np.clip(self.weight_matrix + weight_change, -1, 1)
-        mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
+        # mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
+        mask = np.random.random(self.weight_matrix.shape) < p
         self.weight_matrix[mask] = new_weights[mask]
 
         # leg length
         devo_change = np.random.normal(scale=np.abs(self.devo_matrix))
         new_devo = np.clip(self.devo_matrix + devo_change, -1, 1)
-        mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
+        # mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
+        mask = np.random.random(self.devo_matrix.shape) < p
         self.devo_matrix[mask] = new_devo[mask]
 
         if not self.devo:
