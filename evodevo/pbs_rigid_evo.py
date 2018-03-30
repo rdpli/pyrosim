@@ -12,7 +12,7 @@ DEVO = False
 SECONDS = 300
 DT = 0.05
 
-SAVE_EVERY = 1000
+SAVE_EVERY = 5000
 DIR = '/users/s/k/skriegma/scratch/rigid_bodies/data'
 
 random.seed(SEED)
