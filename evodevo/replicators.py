@@ -48,7 +48,7 @@ class Individual(object):
         change /= float(2.0*np.product(change.shape))
         return np.sum(change)
 
-    def mutate(self, new_id, p=0.1):
+    def mutate(self, new_id, n=1):
 
         # if self.devo:
         #     n *= 2  # same proportion of genes mutated in evo and evo-devo
@@ -56,15 +56,15 @@ class Individual(object):
         # neural net
         weight_change = np.random.normal(scale=np.abs(self.weight_matrix))
         new_weights = np.clip(self.weight_matrix + weight_change, -1, 1)
-        # mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
-        mask = np.random.random(self.weight_matrix.shape) < p
+        mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
+        # mask = np.random.random(self.weight_matrix.shape) < p
         self.weight_matrix[mask] = new_weights[mask]
 
         # leg length
         devo_change = np.random.normal(scale=np.abs(self.devo_matrix))
         new_devo = np.clip(self.devo_matrix + devo_change, -1, 1)
-        # mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
-        mask = np.random.random(self.devo_matrix.shape) < p
+        mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
+        # mask = np.random.random(self.devo_matrix.shape) < p
         self.devo_matrix[mask] = new_devo[mask]
 
         if not self.devo:
@@ -135,9 +135,11 @@ class Population(object):
             self.hist[key]['fit'] = ind.fitness
 
     def save(self, dir, seed):
-        f = open(dir + '/Rigid_{0}_Run_{1}_Gen_{2}.p'.format(self.name, seed, self.gen), 'w')
-        cPickle.dump(self.hist, f)
-        f.close()
+        # f = open(dir + '/Rigid_{0}_Run_{1}_Gen_{2}.p'.format(self.name, seed, self.gen), 'w')
+        # cPickle.dump(self.hist, f)
+        # f.close()
+        with open(dir + '/Rigid_{0}_Run_{1}_Gen_{2}.p'.format(self.name, seed, self.gen), 'wb') as handle:
+            cPickle.dump(self.hist, handle, protocol=cPickle.HIGHEST_PROTOCOL)
 
     def evaluate(self):
         for key, ind in self.individuals_dict.items():

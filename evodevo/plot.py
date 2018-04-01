@@ -14,19 +14,24 @@ sns.set_style("white", {'font.family': 'serif', 'font.serif': 'Times New Roman'}
 colors = sns.color_palette("muted", 3)
 sns.set_palette(list(reversed(colors)))
 
+USE_PICKLE = False
 
-RUNS = 20
-DIR = '/home/sam/Archive/skriegma/rigid_bodies/'
+RUNS = 24
+GENS = 10000
+DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
 CMAP = "jet"
-COLOR_LIM = 5
 GRID_SIZE = 30
 
-changes = []
+if not USE_PICKLE:
 
-for run in range(1, RUNS+1):
-    for gen in range(1000, 10001, 1000):
-        r = open(DIR + 'Rigid_Devo_1_Run_{0}_Gen_{1}.p'.format(run, gen), 'r')
-        pickle_dict = cPickle.load(r)
+    changes = []
+
+    for run in range(1, RUNS+1):
+        print "getting run", run
+        # r = open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb')
+        # pickle_dict = cPickle.load(r)
+        with open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb') as handle:
+            pickle_dict = cPickle.load(handle)
 
         for k, v in pickle_dict.items():
             bot = Individual(k, 1)
@@ -36,18 +41,28 @@ for run in range(1, RUNS+1):
             body = bot.calc_body_change()
             changes += [{'id': k, 'fit': v['fit'], 'control': control, 'body': body}]
 
-dist = [min(np.sqrt(x['fit']), 0.5) for x in changes]
-control = [x['control'] for x in changes]
-body = [x['body'] for x in changes]
+    fit = [x['fit'] for x in changes]
+    control = [x['control'] for x in changes]
+    body = [x['body'] for x in changes]
+
+    data = [fit, control, body]
+
+    with open(DIR + '/development.p', 'wb') as handle:
+        cPickle.dump(data, handle, protocol=cPickle.HIGHEST_PROTOCOL)
+
+else:
+    with open(DIR + '/development.p', 'rb') as handle:
+        fit, control, body = cPickle.load(handle)
 
 f, axes = plt.subplots(1, 1, figsize=(6, 5))
 
-plt.hexbin(control, body, C=dist,
+plt.hexbin(control, body, C=fit,
            gridsize=GRID_SIZE,
            extent=(0, 1, 0, 1),
            cmap=CMAP, linewidths=0.01,
            reduce_C_function=np.median,
-           vmin=0)
+           # vmin=0
+           )
 
 axes.set_ylabel("Morphological development", fontsize=15)
 axes.set_xlabel("Controller development", fontsize=15)
@@ -55,7 +70,7 @@ axes.set_ylim([0, 1])
 axes.set_xlim([0, 1])
 
 cb = plt.colorbar(ticks=[])
-# cb = plt.colorbar(ticks=np.arange(0, 0.5, 0.1))
+# cb = plt.colorbar(ticks=np.arange(0, 0.25, 0.05))
 # cb.set_clim(0, 0.5)
 cb.ax.tick_params(labelsize=15)
 

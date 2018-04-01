@@ -9,11 +9,11 @@ GENS = 5
 
 DEVO = True
 
-SECONDS = 60
+SECONDS = 100
 DT = 0.05
 
 SAVE_EVERY = 10
-DIR = 'data'
+DIR = 'data'  # '/home/sam/Archive/skriegma/rigid_bodies/data'
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -33,8 +33,10 @@ np.random.seed(SEED)
 # pop.save(DIR, SEED)
 
 for run in range(1, 2):
-    r = open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'r')
-    pickle_dict = cPickle.load(r)
+    print "loading run", run
+    with open(DIR + '/Rigid_Devo_Run_{0}_Gen_5.p'.format(run), 'rb') as handle:
+        pickle_dict = cPickle.load(handle)
+    print "got it"
 
     robot_ids = []
     best_fit = 0
@@ -43,7 +45,7 @@ for run in range(1, 2):
         robot_ids += [k]
         if v['fit'] > best_fit:
             champ_idx, best_fit = k, v['fit']
-    print run, best_fit
+        print run, best_fit
 
 # rand_idx = np.random.choice(robot_ids)
 # champ_idx = rand_idx
