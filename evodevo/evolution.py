@@ -45,7 +45,7 @@ for run in range(1, 2):
         robot_ids += [k]
         if v['fit'] > best_fit:
             champ_idx, best_fit = k, v['fit']
-        print run, best_fit
+        # print run, best_fit
 
 # rand_idx = np.random.choice(robot_ids)
 # champ_idx = rand_idx
@@ -54,8 +54,9 @@ bot = Individual(0, 1)
 bot.weight_matrix = pickle_dict[champ_idx]['weights']
 bot.devo_matrix = pickle_dict[champ_idx]['devo']
 
-bot.turn_off_brain()
+# bot.turn_off_brain()
 # bot.turn_off_body(1.0)
+print bot.calc_body_change(), bot.calc_control_change()
 
 bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True)
 

@@ -22,7 +22,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05, sou
     slide_cyls = [0]*8
     slide_joints = [0]*8
     foot_sensors = [0]*4
-    sensor_neurons = [0]*5
+    sensor_neurons = [0]*4
     motor_neurons = [0]*8
     devo_neurons = [0]*8
 

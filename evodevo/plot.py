@@ -1,5 +1,6 @@
 import cPickle
 import numpy as np
+import time
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -14,9 +15,9 @@ sns.set_style("white", {'font.family': 'serif', 'font.serif': 'Times New Roman'}
 colors = sns.color_palette("muted", 3)
 sns.set_palette(list(reversed(colors)))
 
-USE_PICKLE = False
-
-RUNS = 24
+USE_PICKLE = True
+START = time.time()
+RUNS = 30
 GENS = 10000
 DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
 CMAP = "jet"
@@ -27,7 +28,8 @@ if not USE_PICKLE:
     changes = []
 
     for run in range(1, RUNS+1):
-        print "getting run", run
+        timer = round((time.time()-START)/60.0, 2)
+        print "{0} mins: Getting Run {1}".format(timer, run)
         # r = open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb')
         # pickle_dict = cPickle.load(r)
         with open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb') as handle:
@@ -47,15 +49,18 @@ if not USE_PICKLE:
 
     data = [fit, control, body]
 
+    print 'pickling'
     with open(DIR + '/development.p', 'wb') as handle:
         cPickle.dump(data, handle, protocol=cPickle.HIGHEST_PROTOCOL)
 
 else:
+    print 'opening pickle'
     with open(DIR + '/development.p', 'rb') as handle:
         fit, control, body = cPickle.load(handle)
 
 f, axes = plt.subplots(1, 1, figsize=(6, 5))
 
+print 'plotting'
 plt.hexbin(control, body, C=fit,
            gridsize=GRID_SIZE,
            extent=(0, 1, 0, 1),
@@ -69,7 +74,8 @@ axes.set_xlabel("Controller development", fontsize=15)
 axes.set_ylim([0, 1])
 axes.set_xlim([0, 1])
 
-cb = plt.colorbar(ticks=[])
+cb = plt.colorbar()
+# cb = plt.colorbar(ticks=range(MIN_BALL_FIT+1, COLOR_LIM+1, 10), boundaries=range(MIN_BALL_FIT, COLOR_LIM+1))
 # cb = plt.colorbar(ticks=np.arange(0, 0.25, 0.05))
 # cb.set_clim(0, 0.5)
 cb.ax.tick_params(labelsize=15)

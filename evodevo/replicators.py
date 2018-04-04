@@ -17,12 +17,26 @@ class Individual(object):
         self.pareto_level = 0
         self.already_evaluated = False
         self.sim = []
+        self.layout = {'slide_joints': [1, 5, 9, 13, 3, 7, 11, 15],
+                       'sensor_neurons': [2, 5, 8, 11],
+                       'light_source': 0,
+                       'light_sensor': 4,
+                       'feet': [0, 1, 2, 3],
+                       'bias_neuron': 20,
+                       'motor_neurons': [0, 3, 6, 9, 1, 4, 7, 10],
+                       'knees': [2, 6, 10, 14],
+                       'devo_neurons': [12, 13, 14, 15, 16, 17, 18, 19],
+                       'slide_clys': [2, 6, 10, 14, 4, 8, 12, 16],
+                       'thighs': [1, 5, 9, 13],
+                       'shins': [3, 7, 11, 15],
+                       'hips': [0, 4, 8, 12]}
 
-        num_sensors = 5
+        num_sensors = 4
         num_motors = 8
+        num_slides = 8
 
         weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors, 2)
-        self.devo_matrix = 2.0 * np.random.rand(8, 2) - 1.0
+        self.devo_matrix = 2.0 * np.random.rand(num_slides, 2) - 1.0
         self.weight_matrix = 2.0 * weight_matrix - 1.0
 
         if not devo:
@@ -44,11 +58,20 @@ class Individual(object):
         return np.sum(change)
 
     def calc_control_change(self):
-        change = np.abs(self.weight_matrix[:, :, 0] - self.weight_matrix[:, :, 1])
-        change /= float(2.0*np.product(change.shape))
-        return np.sum(change)
+        count = 0
+        change = 0
+        for source_id in self.layout['sensor_neurons']:
+            for target_id in self.layout['motor_neurons']:
+                start = self.weight_matrix[source_id, target_id, 0]
+                final = self.weight_matrix[source_id, target_id, 1]
+                change += abs(start - final)
+                count += 1
+        return 0.5*change/float(count)
 
     def mutate(self, new_id, n=1):
+
+        num_synapses = len(self.layout['sensor_neurons']) * len(self.layout['motor_neurons'])
+        p = n / float(num_synapses)
 
         # if self.devo:
         #     n *= 2  # same proportion of genes mutated in evo and evo-devo
@@ -56,8 +79,8 @@ class Individual(object):
         # neural net
         weight_change = np.random.normal(scale=np.abs(self.weight_matrix))
         new_weights = np.clip(self.weight_matrix + weight_change, -1, 1)
-        mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
-        # mask = np.random.random(self.weight_matrix.shape) < p
+        # mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
+        mask = np.random.random(self.weight_matrix.shape) < p
         self.weight_matrix[mask] = new_weights[mask]
 
         # leg length
@@ -77,9 +100,9 @@ class Individual(object):
         eval_time = int(seconds/dt)
         self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt,
                                      use_textures=fancy, play_paused=pause)
-        layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix)
+        self.layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix)
         self.sim.start()
-        self.fitness_sensor_idx = layout['light_sensor']
+        self.fitness_sensor_idx = self.layout['light_sensor']
 
     def compute_fitness(self):
         self.sim.wait_to_finish()
