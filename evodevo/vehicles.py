@@ -1,7 +1,8 @@
 import math
+from functools import partial
 
 
-def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05, source=10, r=1, g=1, b=1):
+def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=0.05, source=10, r=1, g=1, b=1):
     """
     A quadruped has a sphere torso with one leg on each side.
 
@@ -118,11 +119,20 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05, sou
     for i in range(8):
         devo_neurons[i] = sim.send_motor_neuron(joint_id=slide_joints[i])
 
-    bias_id = sim.send_bias_neuron()
+    def develop(t, s, f):
+        ts = float(seconds-1)
+        return s + t/ts*(f-s)
+
+    # start = 0
+    # end = 1
+    # bias_id = sim.send_function_neuron(partial(develop, s=start, f=end))
+    # bias_id = sim.send_bias_neuron()
     count = 0
     for target_id in devo_neurons:
         start, end = devo_matrix[count, :]
-        sim.send_developing_synapse(bias_id, target_id, start_weight=start, end_weight=end)
+        # sim.send_developing_synapse(bias_id, target_id, start_weight=start, end_weight=end)
+        bias_id = sim.send_function_neuron(partial(develop, s=start, f=end))
+        sim.send_synapse(bias_id, target_id, 1.0)
         count += 1
 
     # layouts are useful for other things not relevant to this example
@@ -135,7 +145,6 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, height=0.3, eps=0.05, sou
               'motor_neurons': motor_neurons,
               'slide_joints': slide_joints,
               'slide_clys': slide_cyls,
-              'bias_neuron': bias_id,
               'devo_neurons': devo_neurons,
               'light_sensor': light_sensor,
               'light_source': light_source}

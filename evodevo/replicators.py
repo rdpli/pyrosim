@@ -22,7 +22,6 @@ class Individual(object):
                        'light_source': 0,
                        'light_sensor': 4,
                        'feet': [0, 1, 2, 3],
-                       'bias_neuron': 20,
                        'motor_neurons': [0, 3, 6, 9, 1, 4, 7, 10],
                        'knees': [2, 6, 10, 14],
                        'devo_neurons': [12, 13, 14, 15, 16, 17, 18, 19],
@@ -36,9 +35,8 @@ class Individual(object):
         num_slides = 8
 
         weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors, 2)
-        self.devo_matrix = 2.0 * np.random.rand(num_slides, 2) - 1.0
         self.weight_matrix = 2.0 * weight_matrix - 1.0
-
+        self.devo_matrix = np.random.rand(num_slides, 2)
         if not devo:
             self.remove_devo()
 
@@ -85,7 +83,7 @@ class Individual(object):
 
         # leg length
         devo_change = np.random.normal(scale=np.abs(self.devo_matrix))
-        new_devo = np.clip(self.devo_matrix + devo_change, -1, 1)
+        new_devo = np.clip(self.devo_matrix + devo_change, 0, 1)
         mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
         # mask = np.random.random(self.devo_matrix.shape) < p
         self.devo_matrix[mask] = new_devo[mask]
@@ -100,7 +98,8 @@ class Individual(object):
         eval_time = int(seconds/dt)
         self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt,
                                      use_textures=fancy, play_paused=pause)
-        self.layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix)
+        self.layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix,
+                                        seconds=seconds)
         self.sim.start()
         self.fitness_sensor_idx = self.layout['light_sensor']
 

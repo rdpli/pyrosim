@@ -4,8 +4,8 @@ import numpy as np
 from replicators import Population, Individual
 
 SEED = 1
-POP_SIZE = 10
-GENS = 5
+POP_SIZE = 30
+GENS = 1
 
 DEVO = True
 
@@ -34,7 +34,7 @@ np.random.seed(SEED)
 
 for run in range(1, 2):
     print "loading run", run
-    with open(DIR + '/Rigid_Devo_Run_{0}_Gen_5.p'.format(run), 'rb') as handle:
+    with open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb') as handle:
         pickle_dict = cPickle.load(handle)
     print "got it"
 
@@ -54,7 +54,9 @@ bot = Individual(0, 1)
 bot.weight_matrix = pickle_dict[champ_idx]['weights']
 bot.devo_matrix = pickle_dict[champ_idx]['devo']
 
-# bot.turn_off_brain()
+print bot.devo_matrix
+
+bot.turn_off_brain()
 # bot.turn_off_body(1.0)
 print bot.calc_body_change(), bot.calc_control_change()
 
