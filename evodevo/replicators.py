@@ -52,8 +52,7 @@ class Individual(object):
 
     def calc_body_change(self):
         change = np.abs(self.devo_matrix[:, 0] - self.devo_matrix[:, 1])
-        change /= float(2.0*len(change))
-        return np.sum(change)
+        return np.mean(change)
 
     def calc_control_change(self):
         count = 0
@@ -62,9 +61,9 @@ class Individual(object):
             for target_id in self.layout['motor_neurons']:
                 start = self.weight_matrix[source_id, target_id, 0]
                 final = self.weight_matrix[source_id, target_id, 1]
-                change += abs(start - final)
+                change += 0.5 * abs(start - final)
                 count += 1
-        return 0.5*change/float(count)
+        return change/float(count)
 
     def mutate(self, new_id, n=1):
 
