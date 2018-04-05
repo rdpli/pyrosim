@@ -5,15 +5,15 @@ from replicators import Population, Individual
 
 SEED = 1
 POP_SIZE = 30
-GENS = 1
+GENS = 10000
 
 DEVO = True
 
-SECONDS = 100
+SECONDS = 60
 DT = 0.05
 
 SAVE_EVERY = 10
-DIR = 'data'  # '/home/sam/Archive/skriegma/rigid_bodies/data'
+DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -56,7 +56,7 @@ bot.devo_matrix = pickle_dict[champ_idx]['devo']
 
 print bot.devo_matrix
 
-bot.turn_off_brain()
+# bot.turn_off_brain()
 # bot.turn_off_body(1.0)
 print bot.calc_body_change(), bot.calc_control_change()
 

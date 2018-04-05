@@ -9,7 +9,7 @@ GENS = 10000
 
 DEVO = True
 
-SECONDS = 100
+SECONDS = 60
 DT = 0.05
 
 DIR = '/users/s/k/skriegma/scratch/rigid_bodies/data'
