@@ -68,4 +68,5 @@ print bot.devo_matrix
 print bot.calc_body_change(), bot.calc_control_change()
 
 bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True)
-
+bot.compute_fitness()
+print bot.fitness

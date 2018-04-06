@@ -102,7 +102,8 @@ class Individual(object):
     def compute_fitness(self):
         self.sim.wait_to_finish()
         dist = self.sim.get_sensor_data(self.fitness_sensor_idx)
-        self.fitness = dist[-1]
+        # self.fitness = dist[-1]
+        self.fitness = np.mean(dist)
         self.already_evaluated = True
 
     def dominates(self, other):
