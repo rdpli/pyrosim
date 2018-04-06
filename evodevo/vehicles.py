@@ -23,7 +23,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     slide_cyls = [0]*8
     slide_joints = [0]*8
     foot_sensors = [0]*4
-    sensor_neurons = [0]*4
+    sensor_neurons = [0]*5
     motor_neurons = [0]*8
     devo_neurons = [0]*8
 
@@ -99,6 +99,9 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
 
         foot_sensors[i] = sim.send_touch_sensor(slide_cyls[i+4])  # rather than on shins[i]
         sensor_neurons[i] = sim.send_sensor_neuron(foot_sensors[i])
+
+    # CPG
+    sensor_neurons[4] = sim.send_function_neuron(math.sin)
 
     light_sensor = sim.send_light_sensor(main_body)
 

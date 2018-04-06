@@ -30,7 +30,7 @@ class Individual(object):
                        'shins': [3, 7, 11, 15],
                        'hips': [0, 4, 8, 12]}
 
-        num_sensors = 4
+        num_sensors = 5
         num_motors = 8
         num_slides = 8
 
