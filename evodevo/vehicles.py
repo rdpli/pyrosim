@@ -13,7 +13,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     The shins (it's foot) then has a touch sensor.
 
     """
-    main_body = sim.send_sphere(x=0, y=0, z=height+eps, radius=height/2., r=r, g=g, b=b)
+    main_body = sim.send_sphere(x=0, y=0, z=height+eps, radius=height, r=r, g=g, b=b)
 
     # id arrays
     thighs = [0]*4
@@ -29,14 +29,17 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
 
     delta = float(math.pi)/2.0
 
+    upper_length = height*0.4
+    lower_length = height*0.25
+
     for i in range(4):
         theta = delta*i
-        x_pos = math.cos(theta)*height
-        y_pos = math.sin(theta)*height
+        x_pos = math.cos(theta)*upper_length
+        y_pos = math.sin(theta)*upper_length
 
         thighs[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height+eps,
                                       r1=x_pos, r2=y_pos, r3=0,
-                                      length=height, radius=eps,
+                                      length=upper_length, radius=eps,
                                       r=r, g=g, b=b
                                       )
 
@@ -53,7 +56,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         # slide1
         slide_cyls[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height+eps,
                                           r1=x_pos, r2=y_pos, r3=0,
-                                          length=height, radius=eps,
+                                          length=upper_length, radius=eps,
                                           r=r, g=g, b=b
                                           )
 
@@ -63,12 +66,12 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         # attach slide motor later
 
         # now for the lower legs
-        x_pos2 = math.cos(theta)*1.5*height
-        y_pos2 = math.sin(theta)*1.5*height
+        x_pos2 = math.cos(theta)*1.5*upper_length
+        y_pos2 = math.sin(theta)*1.5*upper_length
 
         shins[i] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(height+eps)/2.0,
                                      r1=0, r2=0, r3=1,
-                                     length=height, radius=eps,
+                                     length=lower_length, radius=eps,
                                      r=r, g=g, b=b
                                      )
 
@@ -85,7 +88,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         # slide2
         slide_cyls[i+4] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(height+eps)/2.0,
                                             r1=0, r2=0, r3=1,
-                                            length=height, radius=eps,
+                                            length=lower_length, radius=eps,
                                             r=r, g=g, b=b
                                             )
 
