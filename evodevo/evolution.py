@@ -1,11 +1,12 @@
 import cPickle
 import random
 import numpy as np
+from glob import glob
 from replicators import Population, Individual
 
-SEED = 1
+SEED = 7
 POP_SIZE = 30
-GENS = 10000
+GENS = 4000
 
 DEVO = True
 
@@ -32,27 +33,30 @@ np.random.seed(SEED)
 #
 # pop.save(DIR, SEED)
 
-# for run in range(1, 2):
-#     print "loading run", run
-#     with open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb') as handle:
-#         pickle_dict = cPickle.load(handle)
-#     print "got it"
-#
-#     robot_ids = []
-#     best_fit = 0
-#     champ_idx = 0
-#     for k, v in pickle_dict.items():
-#         robot_ids += [k]
-#         if v['fit'] > best_fit:
-#             champ_idx, best_fit = k, v['fit']
-#         # print run, best_fit
 
-# rand_idx = np.random.choice(robot_ids)
-# champ_idx = rand_idx
+pickles = glob(DIR+'/*.p')
+
+run = pickles[SEED]
+
+with open(run, 'rb') as handle:
+    pickle_dict = cPickle.load(handle)
+print "got it"
+
+robot_ids = []
+best_fit = 0
+champ_idx = 0
+for k, v in pickle_dict.items():
+    robot_ids += [k]
+    if v['fit'] > best_fit:
+        champ_idx, best_fit = k, v['fit']
+    # print run, best_fit
+
+rand_idx = np.random.choice(robot_ids)
+champ_idx = rand_idx
 
 bot = Individual(0, 1)
-# bot.weight_matrix = pickle_dict[champ_idx]['weights']
-# bot.devo_matrix = pickle_dict[champ_idx]['devo']
+bot.weight_matrix = pickle_dict[champ_idx]['weights']
+bot.devo_matrix = pickle_dict[champ_idx]['devo']
 
 # bot.devo_matrix = np.ones_like(bot.devo_matrix)
 # bot.devo_matrix = np.zeros_like(bot.devo_matrix)
@@ -60,7 +64,7 @@ bot = Individual(0, 1)
 print bot.devo_matrix
 
 # bot.turn_off_brain()
-# bot.turn_off_body(1.0)
+bot.turn_off_body(1.0)
 print bot.calc_body_change(), bot.calc_control_change()
 
 bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True)

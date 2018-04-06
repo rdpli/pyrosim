@@ -1,6 +1,7 @@
 import cPickle
 import numpy as np
 import time
+from glob import glob
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -15,9 +16,8 @@ sns.set_style("white", {'font.family': 'serif', 'font.serif': 'Times New Roman'}
 colors = sns.color_palette("muted", 3)
 sns.set_palette(list(reversed(colors)))
 
-USE_PICKLE = True
+USE_PICKLE = False
 START = time.time()
-RUNS = 30
 GENS = 10000
 DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
 CMAP = "jet"
@@ -27,12 +27,13 @@ if not USE_PICKLE:
 
     changes = []
 
-    for run in range(1, RUNS+1):
+    pickles = glob(DIR+'/*.p')
+
+    count = 1
+    for this_pickle in pickles:
         timer = round((time.time()-START)/60.0, 2)
-        print "{0} mins: Getting Run {1}".format(timer, run)
-        # r = open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb')
-        # pickle_dict = cPickle.load(r)
-        with open(DIR + '/Rigid_Devo_Run_{0}_Gen_{1}.p'.format(run, GENS), 'rb') as handle:
+        print "{0} mins: Getting Run {1}".format(timer, count)
+        with open(this_pickle, 'rb') as handle:
             pickle_dict = cPickle.load(handle)
 
         for k, v in pickle_dict.items():
@@ -42,6 +43,8 @@ if not USE_PICKLE:
             control = bot.calc_control_change()
             body = bot.calc_body_change()
             changes += [{'id': k, 'fit': v['fit'], 'control': control, 'body': body}]
+
+        count += 1
 
     fit = [x['fit'] for x in changes]
     control = [x['control'] for x in changes]
