@@ -15,3 +15,7 @@ pyrosim/simulator/tmp
 pyrosim/frame
 ./frame
 .DS_Store
+.idea/
+evodevo/data/
+pyrosim/simulator/.libs/
+pyrosim/simulator/ode-0.12/
