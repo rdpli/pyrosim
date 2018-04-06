@@ -19,3 +19,4 @@ pyrosim/frame
 evodevo/data/
 pyrosim/simulator/.libs/
 pyrosim/simulator/ode-0.12/
+evodevo/*.pdf
