@@ -71,14 +71,14 @@ class Individual(object):
         p = n / float(num_synapses)
 
         # neural net
-        weight_change = np.random.normal(scale=np.abs(self.weight_matrix))
+        weight_change = np.random.normal(scale=np.power(self.weight_matrix, 0.5))  # np.abs(self.weight_matrix))
         new_weights = np.clip(self.weight_matrix + weight_change, -1, 1)
         # mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
         mask = np.random.random(self.weight_matrix.shape) < p
         self.weight_matrix[mask] = new_weights[mask]
 
         # leg length
-        devo_change = np.random.normal(scale=np.abs(self.devo_matrix))
+        devo_change = np.random.normal(scale=np.power(self.devo_matrix, 0.5))  # np.abs(self.devo_matrix))
         new_devo = np.clip(self.devo_matrix + devo_change, 0, 1)
         mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
         # mask = np.random.random(self.devo_matrix.shape) < p
@@ -90,10 +90,10 @@ class Individual(object):
         self.id = new_id
         self.already_evaluated = False
 
-    def start_evaluation(self, seconds, dt, blind=True, fancy=False, pause=False):
+    def start_evaluation(self, seconds, dt, blind=True, fancy=False, pause=False, debug=False):
         eval_time = int(seconds/dt)
         self.sim = pyrosim.Simulator(eval_time=eval_time, play_blind=blind, dt=dt,
-                                     use_textures=fancy, play_paused=pause)
+                                     use_textures=fancy, play_paused=pause, debug=debug)
         self.layout = send_to_simulator(self.sim, weight_matrix=self.weight_matrix, devo_matrix=self.devo_matrix,
                                         seconds=seconds)
         self.sim.start()
