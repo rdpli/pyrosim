@@ -71,14 +71,14 @@ class Individual(object):
         p = n / float(num_synapses)
 
         # neural net
-        weight_change = np.random.normal(scale=np.power(self.weight_matrix, 0.5))  # np.abs(self.weight_matrix))
+        weight_change = np.random.normal(scale=0.5)  # np.abs(self.weight_matrix))
         new_weights = np.clip(self.weight_matrix + weight_change, -1, 1)
         # mask = np.random.random(self.weight_matrix.shape) < n/float(weight_change.size)
         mask = np.random.random(self.weight_matrix.shape) < p
         self.weight_matrix[mask] = new_weights[mask]
 
         # leg length
-        devo_change = np.random.normal(scale=np.power(self.devo_matrix, 0.5))  # np.abs(self.devo_matrix))
+        devo_change = np.random.normal(scale=0.5)  # np.abs(self.devo_matrix))
         new_devo = np.clip(self.devo_matrix + devo_change, 0, 1)
         mask = np.random.random(self.devo_matrix.shape) < n/float(devo_change.size)
         # mask = np.random.random(self.devo_matrix.shape) < p
