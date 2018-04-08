@@ -138,13 +138,13 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         devo_neurons[i] = sim.send_motor_neuron(joint_id=slide_joints[i])
 
     def develop(t, s, f):
-        ts = float(seconds-1)
+        ts = float(seconds)
         # return s + t/ts*(f-s)
-        return t/ts*(f-s)
+        if f < s:  # todo: hack for shrinkage only to prevent overgrowth (limbs larger than one)
+            return t/ts*(f-s)
+        else:
+            return 0.0
 
-    # start = 0
-    # end = 1
-    # bias_id = sim.send_function_neuron(partial(develop, s=start, f=end))
     # bias_id = sim.send_bias_neuron()
     count = 0
     for target_id in devo_neurons:

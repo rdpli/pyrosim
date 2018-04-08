@@ -17,7 +17,7 @@ colors = sns.color_palette("muted", 3)
 sns.set_palette(list(reversed(colors)))
 
 USE_PICKLE = 1
-REDUCE_FUNC = np.mean
+REDUCE_FUNC = np.median
 START = time.time()
 GENS = 10000
 DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
