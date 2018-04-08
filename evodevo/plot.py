@@ -16,7 +16,8 @@ sns.set_style("white", {'font.family': 'serif', 'font.serif': 'Times New Roman'}
 colors = sns.color_palette("muted", 3)
 sns.set_palette(list(reversed(colors)))
 
-USE_PICKLE = False
+USE_PICKLE = 1
+REDUCE_FUNC = np.mean
 START = time.time()
 GENS = 10000
 DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
@@ -25,9 +26,9 @@ GRID_SIZE = 30
 
 if not USE_PICKLE:
 
-    changes = []
+    changes = {}
 
-    pickles = glob(DIR+'/*.p')
+    pickles = glob(DIR+'/Rigid*.p')
 
     count = 1
     for this_pickle in pickles:
@@ -36,30 +37,45 @@ if not USE_PICKLE:
         with open(this_pickle, 'rb') as handle:
             pickle_dict = cPickle.load(handle)
 
+        best = 0
+        champ_devo = 1
         for k, v in pickle_dict.items():
             bot = Individual(k, 1)
             bot.weight_matrix = v['weights']
             bot.devo_matrix = v['devo']
             control = bot.calc_control_change()
             body = bot.calc_body_change()
-            changes += [{'id': k, 'fit': v['fit'], 'control': control, 'body': body}]
+            changes[k] = {'fit': v['fit'], 'control': control, 'body': body}
 
+            if v['fit'] > best:
+                best = v['fit']
+                champ_devo = body
+
+        print 'best fit: {0}; devo: {1}'.format(best, champ_devo)
         count += 1
 
-    fit = [x['fit'] for x in changes]
-    control = [x['control'] for x in changes]
-    body = [x['body'] for x in changes]
-
-    data = [fit, control, body]
+    # fit = [x['fit'] for x in changes]
+    # control = [x['control'] for x in changes]
+    # body = [x['body'] for x in changes]
+    #
+    # data = [fit, control, body]
 
     print 'pickling'
     with open(DIR + '/development.p', 'wb') as handle:
-        cPickle.dump(data, handle, protocol=cPickle.HIGHEST_PROTOCOL)
+        cPickle.dump(changes, handle, protocol=cPickle.HIGHEST_PROTOCOL)
 
 else:
     print 'opening pickle'
     with open(DIR + '/development.p', 'rb') as handle:
-        fit, control, body = cPickle.load(handle)
+        changes = cPickle.load(handle)
+
+fit = []
+body = []
+control = []
+for k, v in changes.items():
+    fit += [v['fit']]
+    body += [v['body']]
+    control += [v['control']]
 
 f, axes = plt.subplots(1, 1, figsize=(6, 5))
 
@@ -68,7 +84,7 @@ plt.hexbin(control, body, C=fit,
            gridsize=GRID_SIZE,
            extent=(0, 1, 0, 1),
            cmap=CMAP, linewidths=0.01,
-           reduce_C_function=np.median,
+           reduce_C_function=REDUCE_FUNC,
            # vmin=0
            )
 
