@@ -16,7 +16,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     """
     h = []
     for i in range(4):
-        h += [height*(1+devo_matrix[i+4, 0])*(1.5-devo_matrix[i+4, 0])]
+        h += [height*(1+devo_matrix[i+4, 0])*(1.335-0.17*devo_matrix[i+4, 0])]
     max_idx = np.argmax(h)
     other_idx = (max_idx+2) % 4
     mid = (h[other_idx] + h[max_idx])/2.0
@@ -62,8 +62,10 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         motor_neurons[i] = sim.send_motor_neuron(joint_id=hips[i])
 
         # slide1
-        slide_x_pos = math.cos(theta)*height*(1+devo_matrix[i, 0])
-        slide_y_pos = math.sin(theta)*height*(1+devo_matrix[i, 0])
+        # x_pos2 = math.cos(theta)*height*(1+devo_matrix[i, 0])*(1.5-0.25*devo_matrix[i, 0])
+        # y_pos2 = math.sin(theta)*height*(1+devo_matrix[i, 0])*(1.5-0.25*devo_matrix[i, 0])
+        slide_x_pos = math.cos(theta)*height*(1+devo_matrix[i, 0])*(1.25-0.25*devo_matrix[i, 0])
+        slide_y_pos = math.sin(theta)*height*(1+devo_matrix[i, 0])*(1.25-0.25*devo_matrix[i, 0])
         slide_cyls[i] = sim.send_cylinder(x=slide_x_pos, y=slide_y_pos, z=z_pos,
                                           r1=x_pos, r2=y_pos, r3=0,
                                           length=height, radius=eps,
@@ -71,15 +73,15 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
                                           )
 
         # thigh to slide1
-        slide_joints[i] = sim.send_slider_joint(slide_cyls[i], thighs[i], x=x_pos, y=y_pos, z=0)
+        slide_joints[i] = sim.send_slider_joint(slide_cyls[i], thighs[i], x=slide_x_pos, y=slide_y_pos, z=0)
 
         # attach slide motor later
 
         # now for the lower legs
         # x_pos2 = math.cos(theta)*1.5*height
         # y_pos2 = math.sin(theta)*1.5*height
-        x_pos2 = math.cos(theta)*height*(1+devo_matrix[i, 0])*(1.75-0.5*devo_matrix[i, 0])
-        y_pos2 = math.sin(theta)*height*(1+devo_matrix[i, 0])*(1.75-0.5*devo_matrix[i, 0])
+        x_pos2 = math.cos(theta)*height*(1+devo_matrix[i, 0])*(1.82-0.56*devo_matrix[i, 0])
+        y_pos2 = math.sin(theta)*height*(1+devo_matrix[i, 0])*(1.82-0.56*devo_matrix[i, 0])
 
         shins[i] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=z_pos-(height+eps)/2.0,
                                      r1=0, r2=0, r3=1,
@@ -98,14 +100,15 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         motor_neurons[i+4] = sim.send_motor_neuron(knees[i])
 
         # slide2
-        slide_cyls[i+4] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=z_pos-(h[i]+eps)/2.0-eps,
+        slide_cyls[i+4] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=z_pos-height*(1+devo_matrix[i+4, 0])+eps,
                                             r1=0, r2=0, r3=1,
                                             length=height, radius=eps,
                                             r=r, g=g, b=b
                                             )
 
         # shin to slide2
-        slide_joints[i+4] = sim.send_slider_joint(shins[i], slide_cyls[i+4], x=0, y=0, z=z_pos-(h[i]+eps)/2.0-eps)
+        slide_joints[i+4] = sim.send_slider_joint(shins[i], slide_cyls[i+4],
+                                                  x=0, y=0, z=z_pos-height*(1+devo_matrix[i+4, 0])+eps)
 
         # attach slide motor later
 

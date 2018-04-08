@@ -58,12 +58,11 @@ bot = Individual(0, 1)
 # bot.devo_matrix = np.ones_like(bot.devo_matrix)
 # bot.devo_matrix = np.zeros_like(bot.devo_matrix)
 
-# devo = np.random.rand(*bot.devo_matrix.shape)
-# devo[:, 1] = devo[:, 0]
-# bot.devo_matrix = devo
+bot.devo_matrix[:, 1] = bot.devo_matrix[:, 0]
 
-# bot.devo_matrix = np.ones_like(bot.devo_matrix)
+bot.devo_matrix = np.ones_like(bot.devo_matrix)
 # bot.devo_matrix = np.zeros_like(bot.devo_matrix)
+# bot.devo_matrix[:, 1] = 1
 
 print bot.devo_matrix
 
@@ -71,6 +70,6 @@ bot.turn_off_brain()
 # bot.turn_off_body(1.0)
 print bot.calc_body_change(), bot.calc_control_change()
 
-bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True, debug=0)
+bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True, debug=1)
 bot.compute_fitness()
 print bot.fitness
