@@ -3,7 +3,7 @@ import numpy as np
 from functools import partial
 
 
-def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=0.05, source=20, r=1, g=1, b=1):
+def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=0.05, source=25, r=1, g=1, b=1):
     """
     A quadruped has a sphere torso with one leg on each side.
 
