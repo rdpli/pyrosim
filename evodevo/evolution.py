@@ -58,11 +58,10 @@ pickles = glob(DIR+'/Rigid*.p')
 
 # bot.devo_matrix[:, 1] = bot.devo_matrix[:, 0]
 
-bot.devo_matrix = np.ones_like(bot.devo_matrix)
-# bot.devo_matrix = np.zeros_like(bot.devo_matrix)
-# bot.devo_matrix[:, 1] = 0.5
+# bot.devo_matrix = np.ones_like(bot.devo_matrix)
+bot.devo_matrix = np.zeros_like(bot.devo_matrix)
+# bot.devo_matrix[:, 1] = 0
 
-# todo: add second to ts for devo func; move box farther away
 
 print bot.devo_matrix
 
@@ -70,6 +69,6 @@ print bot.devo_matrix
 # bot.turn_off_body(1.0)
 print bot.calc_body_change(), bot.calc_control_change()
 
-bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True, debug=0)
+bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True, debug=True)
 bot.compute_fitness()
 print bot.fitness
