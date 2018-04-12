@@ -17,22 +17,19 @@ class Individual(object):
         self.pareto_level = 0
         self.already_evaluated = False
         self.sim = []
-        self.layout = {'slide_joints': [1, 5, 9, 13, 3, 7, 11, 15],
-                       'sensor_neurons': [2, 5, 8, 11],
+        self.layout = {'sensor_neurons': [4, 5, 0],
+                       'limbs': [4, 6, 8, 10],
+                       'devo_neurons': [6, 7, 8, 9],
+                       'slide_joints': [1, 3, 5, 7],
+                       'motor_neurons': [0, 1, 2, 3],
                        'light_source': 0,
-                       'light_sensor': 4,
-                       'feet': [0, 1, 2, 3],
-                       'motor_neurons': [0, 3, 6, 9, 1, 4, 7, 10],
-                       'knees': [2, 6, 10, 14],
-                       'devo_neurons': [12, 13, 14, 15, 16, 17, 18, 19],
-                       'slide_clys': [2, 6, 10, 14, 4, 8, 12, 16],
-                       'thighs': [1, 5, 9, 13],
-                       'shins': [3, 7, 11, 15],
-                       'hips': [0, 4, 8, 12]}
+                       'slide_clys': [5, 7, 9, 11],
+                       'light_sensor': 0,
+                       'hips': [0, 2, 4, 6]}
 
-        num_sensors = 6
+        num_sensors = 2
         num_motors = 8
-        num_slides = 8
+        num_slides = 4
 
         weight_matrix = np.random.rand(num_sensors+num_motors, num_sensors+num_motors, 2)
         self.weight_matrix = 2.0 * weight_matrix - 1.0

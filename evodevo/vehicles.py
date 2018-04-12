@@ -13,10 +13,15 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     The shins (it's foot) then has a touch sensor.
 
     """
-    main_body = sim.send_sphere(x=0, y=0, z=height+eps+2.5, radius=height*1.5, mass=1, r=r, g=g, b=b)
+    floor = 2.9
+    radius = height*1.5
+    length = 0.1
+    leg_angle = -1.0
 
-    ramp = sim.send_box(x=0, y=0, z=2.1, r1=0, r2=0, r3=1,
-                        length=source, width=source*2-height*4, height=0.01, mass=100,
+    main_body = sim.send_sphere(x=0, y=0, z=height+eps+floor, radius=radius, mass=10.0, r=r, g=g, b=b)
+
+    ramp = sim.send_box(x=0, y=0, z=2.5, r1=0, r2=0, r3=1,
+                        length=source, width=source*2-height*4, height=0.5, mass=100,
                         r=0.1, g=1, b=1)
     ledge1 = sim.send_box(x=source/2.5, y=source/2.5, z=eps+1, r1=0, r2=0, r3=1,
                           length=1, width=1, height=2, mass=150)
@@ -24,99 +29,55 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
                           length=1, width=1, height=2, mass=150)
 
     # id arrays
-    thighs = [0]*4
-    shins = [0]*4
+    limbs = [0]*4
     hips = [0]*4
-    knees = [0]*4
-    slide_cyls = [0]*8
-    slide_joints = [0]*8
-    foot_sensors = [0]*4
-    sensor_neurons = [0]*6
-    motor_neurons = [0]*8
-    devo_neurons = [0]*8
-
-    length = height/4.0
+    sensor_neurons = [0]*3
+    motor_neurons = [0]*4
+    slide_cyls = [0]*4
+    slide_joints = [0]*4
+    devo_neurons = [0]*4
 
     delta = float(math.pi)/2.0
     adjust = [-0.5, 0., -0.5, 0.]
 
     for i in range(4):
         theta = delta*(i+adjust[i])
-        x_pos = math.cos(theta)*height*1.5
-        y_pos = math.sin(theta)*height*1.5
+        x_pos = math.cos(theta)*radius*1.1
+        y_pos = math.sin(theta)*radius*1.1
 
-        thighs[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height+eps+2.5,
-                                      r1=x_pos, r2=y_pos, r3=0,
-                                      length=length, radius=eps, mass=1,
-                                      r=r, g=g, b=b
-                                      )
-
-        # main_body to thigh
-        hips[i] = sim.send_hinge_joint(main_body, thighs[i],
-                                       x=x_pos, y=y_pos, z=height+eps+2.5,
-                                       n1=-y_pos, n2=x_pos, n3=0,
-                                       lo=-math.pi/4.0, hi=math.pi/4.0
-                                       )
-
-        # hip motor
-        motor_neurons[i] = sim.send_motor_neuron(joint_id=hips[i])
-
-        # slide1
-        slide_cyls[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height+eps+2.5,
-                                          r1=x_pos, r2=y_pos, r3=0,
-                                          length=length, radius=eps, mass=1,
-                                          r=r, g=g, b=b
-                                          )
-
-        # thigh to slide1
-        slide_joints[i] = sim.send_slider_joint(slide_cyls[i], thighs[i], x=x_pos, y=y_pos, z=0)
-
-        # attach slide motor later
-
-        # now for the lower legs
-        x_pos2 = math.cos(theta)*1.5*height
-        y_pos2 = math.sin(theta)*1.5*height
-
-        shins[i] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(height+eps)/2.0+2.5,
-                                     r1=0, r2=0, r3=1,
+        limbs[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height/1.1+eps+floor,
+                                     r1=x_pos, r2=y_pos, r3=leg_angle,
                                      length=length, radius=eps, mass=1,
                                      r=r, g=g, b=b
                                      )
 
-        # slide1 to shin
-        knees[i] = sim.send_hinge_joint(slide_cyls[i], shins[i],
-                                        x=x_pos2, y=y_pos2, z=height+eps+2.5,
-                                        n1=-y_pos, n2=x_pos, n3=0,
-                                        lo=-math.pi/4.0, hi=math.pi/4.0
-                                        )
+        hips[i] = sim.send_hinge_joint(main_body, limbs[i],
+                                       x=x_pos, y=y_pos, z=height+eps+floor,
+                                       n1=-y_pos, n2=x_pos, n3=math.pi*2,
+                                       lo=-math.pi/4.0, hi=math.pi/4.0
+                                       )
 
-        # knee motor
-        motor_neurons[i+4] = sim.send_motor_neuron(knees[i])
+        motor_neurons[i] = sim.send_motor_neuron(joint_id=hips[i])
 
-        # slide2
-        slide_cyls[i+4] = sim.send_cylinder(x=x_pos2, y=y_pos2, z=(height+eps)/2.0+2.5,
-                                            r1=0, r2=0, r3=1,
-                                            length=length*2, radius=eps, mass=1,
-                                            r=r, g=g, b=b
-                                            )
+        slide_cyls[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height/1.1+eps+floor,
+                                          r1=x_pos, r2=y_pos, r3=leg_angle,
+                                          length=length/2.0, radius=eps, mass=1,
+                                          r=0, g=g, b=0
+                                          )
 
-        # shin to slide2
-        slide_joints[i+4] = sim.send_slider_joint(shins[i], slide_cyls[i+4], x=0, y=0, z=height+eps)
-
-        # attach slide motor later
-
-        foot_sensors[i] = sim.send_touch_sensor(slide_cyls[i+4])  # rather than on shins[i]
-        sensor_neurons[i] = sim.send_sensor_neuron(foot_sensors[i])
+        slide_joints[i] = sim.send_slider_joint(slide_cyls[i], limbs[i], x=x_pos, y=y_pos, z=leg_angle,
+                                                lo=-0.75, hi=0.75)
 
     # CPG
-    sensor_neurons[4] = sim.send_function_neuron(math.sin)
-    sensor_neurons[5] = sim.send_function_neuron(math.cos)
+    sensor_neurons[0] = sim.send_function_neuron(math.sin)
+    sensor_neurons[1] = sim.send_function_neuron(math.cos)
 
+    # for fitness only
     light_sensor = sim.send_light_sensor(main_body)
 
-    env_box = sim.send_box(x=-source, y=0, z=height,
-                           length=height*2, width=height*2, height=height*2,
-                           mass=3.,
+    env_box = sim.send_box(x=-source, y=0, z=2*radius+eps,
+                           length=source, width=1, height=radius*3,
+                           mass=1e9,
                            r=1, g=248/255., b=66/255.)
     light_source = sim.send_light_source(env_box)
 
@@ -131,12 +92,13 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
             sim.send_developing_synapse(source_id, target_id, start_weight=start_weight, end_weight=end_weight)
 
     # now we send all the slide motors
-    for i in range(8):
+    for i in range(4):
         devo_neurons[i] = sim.send_motor_neuron(joint_id=slide_joints[i])
 
     def develop(t, s, f):
+        adj = 2.0
         ts = float(seconds-1)
-        return s + t/ts*(f-s)
+        return s + t/ts*(f-s)*adj
 
     # start = 0
     # end = 1
@@ -151,11 +113,8 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         count += 1
 
     # layouts are useful for other things not relevant to this example
-    layout = {'thighs': thighs,
-              'shins': shins,
+    layout = {'limbs': limbs,
               'hips': hips,
-              'knees': knees,
-              'feet': foot_sensors,
               'sensor_neurons': sensor_neurons,
               'motor_neurons': motor_neurons,
               'slide_joints': slide_joints,

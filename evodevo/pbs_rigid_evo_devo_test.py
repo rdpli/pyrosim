@@ -5,7 +5,7 @@ from replicators import Population
 
 SEED = int(sys.argv[1])
 POP_SIZE = 30
-GENS = 4000
+GENS = 3000
 
 DEVO = True
 
