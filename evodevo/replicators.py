@@ -51,8 +51,10 @@ class Individual(object):
         self.devo_matrix = np.ones_like(self.devo_matrix)*l
 
     def calc_body_change(self):
-        change = np.abs(self.devo_matrix[:, 0] - self.devo_matrix[:, 1])
-        return np.mean(change)
+        # change = np.abs(self.devo_matrix[:, 0] - self.devo_matrix[:, 1])
+        change = self.devo_matrix[:, 1] - self.devo_matrix[:, 0]
+        change[change > 0] = 0  # shrink only hack
+        return np.mean(-change)
 
     def calc_control_change(self):
         count = 0

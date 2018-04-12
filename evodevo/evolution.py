@@ -60,13 +60,11 @@ pickles = glob(DIR+'/Rigid*.p')
 
 bot.devo_matrix = np.ones_like(bot.devo_matrix)
 # bot.devo_matrix = np.zeros_like(bot.devo_matrix)
-# bot.devo_matrix[:, 1] = 0.5
-
-# todo: add second to ts for devo func; move box farther away
+bot.devo_matrix[:, 1] = 0.0
 
 print bot.devo_matrix
 
-# bot.turn_off_brain()
+bot.turn_off_brain()
 # bot.turn_off_body(1.0)
 print bot.calc_body_change(), bot.calc_control_change()
 

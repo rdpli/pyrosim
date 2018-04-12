@@ -13,11 +13,9 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 sns.set(color_codes=True, context="poster")
 sns.set_style("white", {'font.family': 'serif', 'font.serif': 'Times New Roman'})
-colors = sns.color_palette("muted", 3)
-sns.set_palette(list(reversed(colors)))
 
-USE_PICKLE = 1
-REDUCE_FUNC = np.median
+USE_PICKLE = True
+REDUCE_FUNC = np.mean
 START = time.time()
 GENS = 10000
 DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
@@ -73,7 +71,8 @@ fit = []
 body = []
 control = []
 for k, v in changes.items():
-    fit += [v['fit']]
+    fit += [10000*v['fit']]
+    # fit += [np.sqrt(v['fit'])]
     body += [v['body']]
     control += [v['control']]
 
@@ -85,18 +84,19 @@ plt.hexbin(control, body, C=fit,
            extent=(0, 1, 0, 1),
            cmap=CMAP, linewidths=0.01,
            reduce_C_function=REDUCE_FUNC,
-           # vmin=0
+           # vmin=8,
+           # vmax=13
            )
 
 axes.set_ylabel("Morphological development", fontsize=15)
 axes.set_xlabel("Controller development", fontsize=15)
-axes.set_ylim([0, 1])
+axes.set_ylim([-0.025, 1])
 axes.set_xlim([0, 1])
 
-cb = plt.colorbar()
-# cb = plt.colorbar(ticks=range(MIN_BALL_FIT+1, COLOR_LIM+1, 10), boundaries=range(MIN_BALL_FIT, COLOR_LIM+1))
+# cb = plt.colorbar()
+cb = plt.colorbar(ticks=np.arange(8, 12.1, 1), boundaries=np.arange(8, 12.1, 0.1))
 # cb = plt.colorbar(ticks=np.arange(0, 0.25, 0.05))
-# cb.set_clim(0, 0.5)
+# cb.set_clim(9, 12)
 cb.ax.tick_params(labelsize=15)
 
 f.text(0.95, 0.8965, "fitness", fontsize=15, bbox={'facecolor': 'white', 'alpha': 1, 'pad': 0, 'edgecolor': 'white'})
@@ -105,7 +105,8 @@ f.text(0.95, 0.1425, "fitness", fontsize=15, bbox={'facecolor': 'white', 'alpha'
 f.text(0.971, 0.1425 + 0.042, "Low", fontsize=15, bbox={'facecolor': 'white', 'alpha': 1, 'pad': 0, 'edgecolor': 'white'})
 
 plt.tight_layout()
-plt.savefig("Honeycomb.pdf", bbox_inches='tight', transparent=True)
+plt.savefig("Honeycomb.pdf", bbox_inches='tight')
+# plt.savefig("FigS5.tiff", bbox_inches='tight', format='tiff', dpi=600)
 plt.clf()
 plt.close()
 
