@@ -4,9 +4,9 @@ import numpy as np
 from glob import glob
 from replicators import Population, Individual
 
-SEED = 0
+SEED = 1
 POP_SIZE = 30
-GENS = 4000
+GENS = 3000
 
 DEVO = True
 
@@ -50,7 +50,9 @@ for k, v in pickle_dict.items():
     robot_ids += [k]
     if v['fit'] > best_fit:
         champ_idx, best_fit = k, v['fit']
-print run, best_fit
+    # print run, best_fit
+
+# champ_idx = 100
 
 bot.weight_matrix = pickle_dict[champ_idx]['weights']
 bot.devo_matrix = pickle_dict[champ_idx]['devo']
