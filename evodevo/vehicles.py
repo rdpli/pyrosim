@@ -28,8 +28,8 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     ledge2 = sim.send_box(x=source/2.5, y=-source/2.5, z=eps+1, r1=0, r2=0, r3=1,
                           length=1, width=1, height=2, mass=150)
 
-    # stopper = sim.send_box(x=-source+0.3, y=-source/2.1, z=0.25,
-    #                        length=0.5, width=0.5, height=0.5, mass=1e9)
+    stopper = sim.send_box(x=-source+0.3, y=-source/2.1, z=0.25,
+                           length=0.5, width=0.5, height=0.5, mass=1e9)
 
     # id arrays
     balls = [0]*8
@@ -80,7 +80,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     # for fitness only
     light_sensor = sim.send_light_sensor(main_body)
 
-    env_box = sim.send_box(x=-source, y=0, z=2*radius+eps,
+    env_box = sim.send_box(x=-source*2, y=0, z=2*radius+eps,
                            length=source, width=1, height=radius*3,
                            mass=1e9,
                            r=1, g=248/255., b=66/255.)

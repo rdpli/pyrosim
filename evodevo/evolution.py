@@ -59,9 +59,9 @@ bot = Individual(0, 1)
 
 # bot.devo_matrix[:, 1] = bot.devo_matrix[:, 0]
 
-bot.devo_matrix = np.ones_like(bot.devo_matrix)
-# bot.devo_matrix = np.zeros_like(bot.devo_matrix)
-bot.devo_matrix[:, 1] = 0
+# bot.devo_matrix = np.ones_like(bot.devo_matrix)
+bot.devo_matrix = np.zeros_like(bot.devo_matrix)
+# bot.devo_matrix[:, 1] = 0
 
 
 print bot.devo_matrix
