@@ -32,11 +32,11 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     #                        length=0.5, width=0.5, height=0.5, mass=1e9)
 
     # id arrays
-    limbs = [0]*4
-    hips = [0]*4
+    balls = [0]*8
+    ball_joints = [0]*8
     sensor_neurons = [0]*3
-    motor_neurons = [0]*4
-    slide_cyls = [0]*4
+    motor_neurons = [0]*8
+    slide_balls = [0]*4
     slide_joints = [0]*4
     devo_neurons = [0]*4
 
@@ -48,28 +48,30 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         x_pos = math.cos(theta)*radius*1.1
         y_pos = math.sin(theta)*radius*1.1
 
-        limbs[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height/1.1+eps+floor,
-                                     r1=x_pos, r2=y_pos, r3=leg_angle,
-                                     length=length, radius=eps, mass=1,
-                                     r=r, g=g, b=b
-                                     )
+        balls[i] = sim.send_sphere(x=x_pos, y=y_pos, z=height+eps+floor, radius=eps)
 
-        hips[i] = sim.send_hinge_joint(main_body, limbs[i],
-                                       x=x_pos, y=y_pos, z=height+eps+floor,
-                                       n1=-y_pos, n2=x_pos, n3=math.pi*2,
-                                       lo=-math.pi/4.0, hi=math.pi/4.0
-                                       )
+        ball_joints[i] = sim.send_hinge_joint(main_body, balls[i],
+                                              x=x_pos, y=y_pos, z=height+eps+floor,
+                                              n1=-y_pos, n2=x_pos, n3=0,
+                                              lo=-math.pi/4.0, hi=math.pi/4.0
+                                              )
 
-        motor_neurons[i] = sim.send_motor_neuron(joint_id=hips[i])
+        motor_neurons[i] = sim.send_motor_neuron(joint_id=ball_joints[i])
 
-        slide_cyls[i] = sim.send_cylinder(x=x_pos, y=y_pos, z=height/1.1+eps+floor,
-                                          r1=x_pos, r2=y_pos, r3=leg_angle,
-                                          length=length/2.0, radius=eps, mass=1,
-                                          r=0, g=g, b=0
-                                          )
+        balls[i+4] = sim.send_sphere(x=x_pos, y=y_pos, z=height+floor, radius=eps)
 
-        slide_joints[i] = sim.send_slider_joint(slide_cyls[i], limbs[i], x=x_pos, y=y_pos, z=leg_angle,
-                                                lo=-0.75, hi=0.75)
+        ball_joints[i+4] = sim.send_hinge_joint(balls[i], balls[i+4],
+                                                x=x_pos, y=y_pos, z=height+floor,
+                                                n1=-y_pos, n2=x_pos, n3=math.pi*2,
+                                                lo=-math.pi/4.0, hi=math.pi/4.0
+                                                )
+
+        motor_neurons[i+4] = sim.send_motor_neuron(joint_id=ball_joints[i+4])
+
+        slide_balls[i] = sim.send_sphere(x=x_pos, y=y_pos, z=height/1.5+eps+floor, radius=eps*1.5)
+
+        slide_joints[i] = sim.send_slider_joint(balls[i+4], slide_balls[i], x=x_pos, y=y_pos, z=90,
+                                                lo=-0.5, hi=0.5)
 
     # CPG
     sensor_neurons[0] = sim.send_function_neuron(math.sin)
@@ -116,12 +118,12 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
         count += 1
 
     # layouts are useful for other things not relevant to this example
-    layout = {'limbs': limbs,
-              'hips': hips,
+    layout = {'balls': balls,
+              'ball_joints': ball_joints,
               'sensor_neurons': sensor_neurons,
               'motor_neurons': motor_neurons,
               'slide_joints': slide_joints,
-              'slide_clys': slide_cyls,
+              'slide_balls': slide_balls,
               'devo_neurons': devo_neurons,
               'light_sensor': light_sensor,
               'light_source': light_source}
