@@ -28,6 +28,9 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     ledge2 = sim.send_box(x=source/2.5, y=-source/2.5, z=eps+1, r1=0, r2=0, r3=1,
                           length=1, width=1, height=2, mass=150)
 
+    # stopper = sim.send_box(x=-source+0.3, y=-source/2.1, z=0.25,
+    #                        length=0.5, width=0.5, height=0.5, mass=1e9)
+
     # id arrays
     limbs = [0]*4
     hips = [0]*4
