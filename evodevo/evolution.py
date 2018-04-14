@@ -74,4 +74,4 @@ bot.start_evaluation(seconds=SECONDS, dt=DT, blind=False, fancy=True, pause=True
 bot.compute_fitness()
 print bot.fitness
 
-# print bot.layout
+print bot.layout

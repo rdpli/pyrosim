@@ -14,7 +14,7 @@ sns.set_style("white", {'font.family': 'serif', 'font.serif': 'Times New Roman'}
 
 USE_PICKLE = 1
 START = time.time()
-DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
+DIR = '/home/sam/Archive/skriegma/rigid_bodies/data_good_honey'
 
 if not USE_PICKLE:
 
