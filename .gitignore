@@ -22,3 +22,5 @@ pyrosim/simulator/ode-0.12/
 evodevo/Honeycomb.pdf
 
 *.tiff
+
+*.pdf
