@@ -18,7 +18,7 @@ USE_PICKLE = True
 REDUCE_FUNC = np.mean
 START = time.time()
 GENS = 3000
-DIR = '/home/sam/Archive/skriegma/rigid_bodies/data'
+DIR = '/home/sam/Archive/skriegma/rigid_bodies/data_good_honey'
 CMAP = "jet"
 GRID_SIZE = 30
 
@@ -26,7 +26,7 @@ if not USE_PICKLE:
 
     changes = {}
 
-    pickles = glob(DIR+'/Rigid*.p')
+    pickles = glob(DIR+'/Rigid*Devo*.p')
 
     count = 1
     for this_pickle in pickles:
@@ -105,8 +105,8 @@ f.text(0.95, 0.1425, "fitness", fontsize=15, bbox={'facecolor': 'white', 'alpha'
 f.text(0.971, 0.1425 + 0.042, "Low", fontsize=15, bbox={'facecolor': 'white', 'alpha': 1, 'pad': 0, 'edgecolor': 'white'})
 
 plt.tight_layout()
-# plt.savefig("Honeycomb.pdf", bbox_inches='tight')
-plt.savefig("FigS5.tiff", bbox_inches='tight', format='tiff', dpi=600)
+plt.savefig("Honeycomb.pdf", bbox_inches='tight')
+# plt.savefig("FigS5.tiff", bbox_inches='tight', format='tiff', dpi=600)
 plt.clf()
 plt.close()
 

@@ -34,7 +34,7 @@ def send_to_simulator(sim, weight_matrix, devo_matrix, seconds, height=0.3, eps=
     # id arrays
     balls = [0]*8
     ball_joints = [0]*8
-    sensor_neurons = [0]*3
+    sensor_neurons = [0]*2
     motor_neurons = [0]*8
     slide_balls = [0]*4
     slide_joints = [0]*4

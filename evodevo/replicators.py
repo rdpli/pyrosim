@@ -17,15 +17,15 @@ class Individual(object):
         self.pareto_level = 0
         self.already_evaluated = False
         self.sim = []
-        self.layout = {'sensor_neurons': [8, 9, 0],
+        self.layout = {'balls': [5, 8, 11, 14, 6, 9, 12, 15],
                        'ball_joints': [0, 3, 6, 9, 1, 4, 7, 10],
-                       'balls': [4, 7, 10, 13, 5, 8, 11, 14],
+                       'slide_balls': [7, 10, 13, 16],
                        'slide_joints': [2, 5, 8, 11],
+                       'sensor_neurons': [8, 9],
                        'motor_neurons': [0, 2, 4, 6, 1, 3, 5, 7],
-                       'light_source': 0,
-                       'devo_neurons': [10, 11, 12, 13],
-                       'slide_balls': [6, 9, 12, 15],
-                       'light_sensor': 0}
+                       'devo_neurons': [10, 11, 12, 13]
+                       }
+
 
         num_sensors = 2
         num_motors = 8
